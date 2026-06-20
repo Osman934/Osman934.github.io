@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Osman Abdulai Koroma — Virtual Bookkeeper &amp; Financial Statement Assistant</title>
+<style>
+  :root{
+    --paper: #F6F3EC;
+    --paper-line: #E3DCC9;
+    --ink: #1F2A24;
+    --ledger-green: #1F3D2B;
+    --ledger-green-2: #2C5039;
+    --balance-gold: #B5862B;
+    --stamp-red: #8C2F26;
+    --muted: #6B6457;
+    --white: #FFFDF8;
+  }
+
+  *{margin:0;padding:0;box-sizing:border-box;}
+
+  html{scroll-behavior:smooth;}
+
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Source Sans Pro', Arial, sans-serif;
+    line-height:1.6;
+    overflow-x:hidden;
+  }
+
+  @font-face{ }
+
+  h1,h2,h3,.display{
+    font-family:'Georgia', 'Times New Roman', serif;
+    font-weight:700;
+    letter-spacing:-0.01em;
+  }
+
+  .mono{
+    font-family:'Courier New', monospace;
+    letter-spacing:0.02em;
+  }
+
+  a{color:inherit;text-decoration:none;}
+
+  .wrap{
+    max-width:1080px;
+    margin:0 auto;
+    padding:0 32px;
+  }
+
+  /* Ledger ruled lines background texture */
+  .ruled{
+    background-image: repeating-linear-gradient(
+      to bottom,
+      transparent 0,
+      transparent 37px,
+      var(--paper-line) 37px,
+      var(--paper-line) 38px
+    );
+  }
+
+  /* ---------- HEADER / NAV ---------- */
+  header{
+    position:sticky;
+    top:0;
+    z-index:50;
+    background:rgba(246,243,236,0.92);
+    backdrop-filter: blur(6px);
+    border-bottom:1px solid var(--paper-line);
+  }
+  nav{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:18px 32px;
+    max-width:1080px;
+    margin:0 auto;
+  }
+  .brand{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    font-family:'Georgia',serif;
+    font-weight:700;
+    font-size:1.15rem;
+    color:var(--ledger-green);
+  }
+  .brand-mark{
+    width:30px;height:30px;
+    border:1.5px solid var(--ledger-green);
+    border-radius:3px;
+    display:flex;align-items:center;justify-content:center;
+    font-family:'Courier New',monospace;
+    font-size:0.7rem;
+    font-weight:700;
+    color:var(--ledger-green);
+    transform: rotate(-3deg);
+  }
+  .nav-links{
+    display:flex;
+    gap:28px;
+    font-size:0.92rem;
+    color:var(--muted);
+  }
+  .nav-links a{
+    position:relative;
+    padding-bottom:4px;
+    transition:color 0.2s;
+  }
+  .nav-links a:hover{color:var(--ledger-green);}
+  .nav-links a::after{
+    content:'';
+    position:absolute;
+    left:0;bottom:0;
+    width:0%;
+    height:1px;
+    background:var(--balance-gold);
+    transition:width 0.25s ease;
+  }
+  .nav-links a:hover::after{width:100%;}
+  .nav-cta{
+    background:var(--ledger-green);
+    color:var(--white);
+    padding:9px 18px;
+    border-radius:2px;
+    font-size:0.88rem;
+    font-weight:600;
+  }
+  .nav-cta:hover{background:var(--ledger-green-2);}
+
+  .menu-toggle{display:none;}
+
+  @media (max-width:760px){
+    .nav-links{display:none;}
+    .menu-toggle{display:block;font-size:1.4rem;color:var(--ledger-green);background:none;border:none;cursor:pointer;}
+  }
+
+  /* ---------- HERO ---------- */
+  .hero{
+    padding:100px 0 80px;
+    position:relative;
+  }
+  .hero-grid{
+    display:grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    gap:60px;
+    align-items:center;
+  }
+  @media (max-width:860px){
+    .hero-grid{grid-template-columns:1fr; gap:40px;}
+  }
+
+  .passport-photo{
+    width:110px;
+    height:142px;
+    object-fit:cover;
+    border-radius:3px;
+    border:2px solid var(--ledger-green);
+    box-shadow:0 8px 18px -8px rgba(31,42,36,0.4);
+    margin-bottom:24px;
+    display:block;
+  }
+  .eyebrow{
+    font-family:'Courier New',monospace;
+    font-size:0.78rem;
+    letter-spacing:0.12em;
+    text-transform:uppercase;
+    color:var(--stamp-red);
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin-bottom:22px;
+  }
+  .hero-profile{
+    display:flex;
+    align-items:center;
+    gap:14px;
+    margin-bottom:26px;
+  }
+  .hero-photo{
+    width:58px;
+    height:58px;
+    border-radius:50%;
+    object-fit:cover;
+    border:2px solid var(--ledger-green);
+    box-shadow:0 6px 16px -6px rgba(31,42,36,0.4);
+  }
+  .hero-profile-name{
+    font-family:'Georgia',serif;
+    font-weight:700;
+    font-size:0.98rem;
+    color:var(--ledger-green);
+  }
+  .hero-profile-role{
+    font-family:'Courier New',monospace;
+    font-size:0.75rem;
+    color:var(--muted);
+    letter-spacing:0.03em;
+  }
+  .eyebrow::before{
+    content:'';
+    width:26px;height:1px;
+    background:var(--stamp-red);
+  }
+
+  .hero h1{
+    font-size:clamp(2.2rem, 4vw, 3.4rem);
+    color:var(--ledger-green);
+    line-height:1.12;
+    margin-bottom:22px;
+  }
+  .hero h1 em{
+    font-style:italic;
+    color:var(--balance-gold);
+  }
+
+  .hero p.lede{
+    font-size:1.08rem;
+    color:#3B4640;
+    max-width:520px;
+    margin-bottom:32px;
+  }
+
+  .hero-ctas{
+    display:flex;
+    gap:16px;
+    flex-wrap:wrap;
+  }
+  .hero-marks{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    margin-bottom:30px;
+  }
+  .hero-mark{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    font-family:'Courier New', monospace;
+    font-size:0.85rem;
+    color:var(--ledger-green-2);
+  }
+  .hero-mark .dot{
+    width:7px;height:7px;
+    border-radius:50%;
+    background:var(--stamp-red);
+    flex-shrink:0;
+  }
+  .btn-primary{
+    background:var(--ledger-green);
+    color:var(--white);
+    padding:14px 28px;
+    border-radius:2px;
+    font-weight:600;
+    font-size:0.95rem;
+    transition:transform 0.2s, background 0.2s;
+    display:inline-block;
+  }
+  .btn-primary:hover{background:var(--ledger-green-2); transform:translateY(-2px);}
+  .btn-secondary{
+    border:1.5px solid var(--ledger-green);
+    color:var(--ledger-green);
+    padding:14px 28px;
+    border-radius:2px;
+    font-weight:600;
+    font-size:0.95rem;
+    transition:background 0.2s;
+    display:inline-block;
+  }
+  .btn-secondary:hover{background:rgba(31,61,43,0.06);}
+
+  /* ---------- LEDGER CARD (signature element) ---------- */
+  .ledger-card{
+    background:var(--white);
+    border:1px solid var(--paper-line);
+    box-shadow: 0 18px 40px -20px rgba(31,42,36,0.35);
+    border-radius:4px;
+    overflow:hidden;
+    transform: rotate(1.2deg);
+    position:relative;
+  }
+  .ledger-card::before{
+    content:'';
+    position:absolute;
+    top:14px; right:14px;
+    width:64px; height:64px;
+    border:2.5px solid var(--stamp-red);
+    border-radius:50%;
+    opacity:0.85;
+    transform: rotate(-18deg);
+  }
+  .ledger-card::after{
+    content:'BALANCED';
+    position:absolute;
+    top:32px; right:18px;
+    width:56px;
+    text-align:center;
+    font-family:'Courier New',monospace;
+    font-size:0.58rem;
+    font-weight:700;
+    letter-spacing:0.05em;
+    color:var(--stamp-red);
+    transform: rotate(-18deg);
+  }
+  .ledger-head{
+    background:var(--ledger-green);
+    color:var(--white);
+    padding:16px 22px;
+    font-family:'Courier New',monospace;
+    font-size:0.78rem;
+    letter-spacing:0.06em;
+    display:flex;
+    justify-content:space-between;
+  }
+  .ledger-body{
+    padding:24px 22px 20px;
+  }
+  .ledger-row{
+    display:flex;
+    justify-content:space-between;
+    padding:10px 0;
+    border-bottom:1px dashed var(--paper-line);
+    font-size:0.88rem;
+  }
+  .ledger-row:last-child{border-bottom:none;}
+  .ledger-row .label{color:var(--muted);}
+  .ledger-row .neg{color:var(--stamp-red); font-family:'Courier New',monospace;}
+  .ledger-row .pos{color:var(--ledger-green); font-family:'Courier New',monospace;}
+  .ledger-total{
+    margin-top:14px;
+    padding-top:14px;
+    border-top:2px solid var(--ledger-green);
+    display:flex;
+    justify-content:space-between;
+    font-weight:700;
+    font-family:'Courier New',monospace;
+    color:var(--ledger-green);
+  }
+
+  /* ---------- SECTION HEADERS ---------- */
+  .section{padding:90px 0;}
+  .section-label{
+    font-family:'Courier New',monospace;
+    font-size:0.78rem;
+    letter-spacing:0.12em;
+    text-transform:uppercase;
+    color:var(--balance-gold);
+    margin-bottom:12px;
+  }
+  .section-title{
+    font-size:clamp(1.7rem, 3vw, 2.3rem);
+    color:var(--ledger-green);
+    margin-bottom:18px;
+  }
+  .section-intro{
+    color:var(--muted);
+    max-width:580px;
+    margin-bottom:50px;
+    font-size:1.02rem;
+  }
+
+  /* ---------- PROBLEM SECTION ---------- */
+  .problem{
+    background:var(--ledger-green);
+    color:var(--white);
+  }
+  .problem .section-label{color:#C9D9CB;}
+  .problem .section-title{color:var(--white);}
+  .problem .section-intro{color:#CBD8CC;}
+
+  .problem-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:28px;
+  }
+  @media (max-width:760px){.problem-grid{grid-template-columns:1fr;}}
+
+  .problem-card{
+    background:rgba(255,253,248,0.05);
+    border:1px solid rgba(255,253,248,0.15);
+    border-radius:4px;
+    padding:28px 24px;
+  }
+  .problem-card .mark{
+    font-family:'Courier New',monospace;
+    font-size:0.78rem;
+    color:#E0A06A;
+    display:block;
+    margin-bottom:14px;
+  }
+  .problem-card h3{
+    font-size:1.08rem;
+    margin-bottom:10px;
+    font-family:'Georgia',serif;
+  }
+  .problem-card p{
+    color:#CBD8CC;
+    font-size:0.92rem;
+  }
+
+  /* ---------- SERVICES ---------- */
+  .services-grid{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:1px;
+    background:var(--paper-line);
+    border:1px solid var(--paper-line);
+  }
+  @media (max-width:760px){.services-grid{grid-template-columns:1fr;}}
+
+  .service-cell{
+    background:var(--paper);
+    padding:32px 30px;
+    position:relative;
+    transition:background 0.25s;
+  }
+  .service-cell:hover{background:var(--white);}
+  .service-cell .num{
+    font-family:'Courier New',monospace;
+    font-size:0.78rem;
+    color:var(--balance-gold);
+    display:block;
+    margin-bottom:14px;
+  }
+  .service-cell h3{
+    font-size:1.18rem;
+    color:var(--ledger-green);
+    margin-bottom:10px;
+  }
+  .service-cell p{
+    color:var(--muted);
+    font-size:0.93rem;
+  }
+
+  /* ---------- PROCESS ---------- */
+  .process-list{
+    border-top:1px solid var(--paper-line);
+  }
+  .process-item{
+    display:grid;
+    grid-template-columns:90px 1fr;
+    gap:24px;
+    padding:28px 0;
+    border-bottom:1px solid var(--paper-line);
+    align-items:start;
+  }
+  @media (max-width:600px){
+    .process-item{grid-template-columns:50px 1fr;}
+  }
+  .process-item .step-num{
+    font-family:'Georgia',serif;
+    font-size:2.1rem;
+    color:var(--paper-line);
+    font-weight:700;
+    line-height:1;
+  }
+  .process-item h3{
+    font-size:1.1rem;
+    color:var(--ledger-green);
+    margin-bottom:6px;
+  }
+  .process-item p{
+    color:var(--muted);
+    font-size:0.93rem;
+    max-width:520px;
+  }
+
+  /* ---------- ABOUT ---------- */
+  .about-grid{
+    display:grid;
+    grid-template-columns: 0.9fr 1.1fr;
+    gap:60px;
+    align-items:start;
+  }
+  @media (max-width:800px){.about-grid{grid-template-columns:1fr;}}
+
+  .about-card{
+    background:var(--white);
+    border:1px solid var(--paper-line);
+    border-radius:4px;
+    padding:30px;
+  }
+  .about-photo{
+    width:100%;
+    max-width:180px;
+    aspect-ratio:1/1;
+    object-fit:cover;
+    border-radius:4px;
+    margin-bottom:22px;
+    border:1px solid var(--paper-line);
+  }
+  .about-card h4{
+    font-family:'Courier New',monospace;
+    font-size:0.75rem;
+    letter-spacing:0.08em;
+    text-transform:uppercase;
+    color:var(--balance-gold);
+    margin-bottom:16px;
+  }
+  .about-card .edu-row{
+    padding:12px 0;
+    border-bottom:1px dashed var(--paper-line);
+  }
+  .about-card .edu-row:last-child{border-bottom:none;}
+  .about-card .edu-row .school{
+    font-weight:600;
+    color:var(--ledger-green);
+    font-size:0.95rem;
+  }
+  .about-card .edu-row .deg{
+    color:var(--muted);
+    font-size:0.85rem;
+  }
+
+  .about-text p{
+    margin-bottom:18px;
+    color:#3B4640;
+  }
+
+  .tool-tags{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+    margin-top:20px;
+  }
+  .tool-tag{
+    background:rgba(31,61,43,0.07);
+    color:var(--ledger-green);
+    font-family:'Courier New',monospace;
+    font-size:0.78rem;
+    padding:6px 12px;
+    border-radius:2px;
+    border:1px solid rgba(31,61,43,0.15);
+  }
+
+  /* ---------- CONTACT ---------- */
+  .contact{
+    background:var(--ledger-green);
+    color:var(--white);
+  }
+  .contact-grid{
+    display:grid;
+    grid-template-columns:1.1fr 0.9fr;
+    gap:50px;
+    align-items:center;
+  }
+  @media (max-width:800px){.contact-grid{grid-template-columns:1fr;}}
+
+  .contact h2{
+    color:var(--white);
+    font-size:clamp(1.8rem,3.4vw,2.5rem);
+    margin-bottom:18px;
+  }
+  .contact p.lede{color:#CBD8CC; max-width:480px; margin-bottom:0;}
+
+  .contact-card{
+    background:rgba(255,253,248,0.06);
+    border:1px solid rgba(255,253,248,0.18);
+    border-radius:4px;
+    padding:32px;
+  }
+  .contact-row{
+    display:flex;
+    align-items:center;
+    gap:14px;
+    padding:14px 0;
+    border-bottom:1px solid rgba(255,253,248,0.12);
+  }
+  .contact-row:last-child{border-bottom:none;}
+  .contact-row .icon{
+    width:34px;height:34px;
+    border:1px solid rgba(255,253,248,0.35);
+    border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    font-size:0.85rem;
+    flex-shrink:0;
+  }
+  .contact-row a, .contact-row span.val{
+    font-size:0.95rem;
+    color:var(--white);
+  }
+  .contact-row .lbl{
+    display:block;
+    font-size:0.72rem;
+    color:#9FB6A4;
+    font-family:'Courier New',monospace;
+    letter-spacing:0.05em;
+    margin-bottom:2px;
+  }
+
+  footer{
+    background:var(--ink);
+    color:#8C9990;
+    text-align:center;
+    padding:26px 0;
+    font-size:0.82rem;
+  }
+
+  /* reveal on scroll */
+  .reveal{
+    opacity:0;
+    transform:translateY(18px);
+    transition:opacity 0.6s ease, transform 0.6s ease;
+  }
+  .reveal.in{
+    opacity:1;
+    transform:translateY(0);
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .reveal{opacity:1; transform:none; transition:none;}
+    html{scroll-behavior:auto;}
+  }
+
+  :focus-visible{
+    outline:2px solid var(--balance-gold);
+    outline-offset:3px;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <nav>
+    <div class="brand">
+      <span class="brand-mark">OK</span>
+      Osman Abdulai Koroma
+    </div>
+    <div class="nav-links">
+      <a href="#about">About</a>
+      <a href="#services">Services</a>
+      <a href="#process">Process</a>
+      <a href="#contact">Contact</a>
+    </div>
+    <a href="#contact" class="nav-cta">Get in touch</a>
+  </nav>
+</header>
+
+<section class="hero">
+  <div class="wrap">
+    <div class="hero-grid">
+      <div>
+        <img src="assets/passport.jpg" alt="Osman Abdulai Koroma" class="passport-photo">
+        <div class="eyebrow">Virtual Bookkeeping &amp; Financial Reporting</div>
+        <h1>Profitable on paper.<br><em>Empty</em> in the account?</h1>
+        <p class="lede">
+          If your business looks fine on the surface but cash never seems to be there at month-end — and the fines from NRA keep coming — the problem usually isn't your business. It's your books.
+        </p>
+        <div class="hero-marks">
+          <span class="hero-mark"><span class="dot"></span>No cash at period end</span>
+          <span class="hero-mark"><span class="dot"></span>Recurring NRA / audit fines</span>
+          <span class="hero-mark"><span class="dot"></span>A false picture of your business</span>
+        </div>
+
+        <div class="hero-ctas">
+          <a href="#contact" class="btn-primary">Book a free review</a>
+          <a href="#services" class="btn-secondary">See how I help</a>
+        </div>
+      </div>
+
+      <div class="ledger-card">
+        <div class="ledger-head">
+          <span>LEDGER — MONTHLY SUMMARY</span>
+          <span>SLE</span>
+        </div>
+        <div class="ledger-body">
+          <div class="ledger-row"><span class="label">Sales revenue</span><span class="pos">+ 42,500,000</span></div>
+          <div class="ledger-row"><span class="label">Cost of goods sold</span><span class="neg">− 18,200,000</span></div>
+          <div class="ledger-row"><span class="label">NRA penalty (late filing)</span><span class="neg">− 0 <span style="text-decoration:line-through; color:#B8AE99;">2,400,000</span></span></div>
+          <div class="ledger-row"><span class="label">Operating expenses</span><span class="neg">− 9,100,000</span></div>
+          <div class="ledger-row"><span class="label">Tax computed correctly</span><span class="pos">on time</span></div>
+          <div class="ledger-total"><span>Net position</span><span>Accurate</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="problem">
+  <div class="wrap">
+    <div class="section-label">The problem</div>
+    <h2 class="section-title reveal">Why the numbers don't add up</h2>
+    <p class="section-intro reveal">Most of this isn't a revenue problem. It's a records problem — and it's fixable.</p>
+
+    <div class="problem-grid">
+      <div class="problem-card reveal">
+        <span class="mark">// no cash at period end</span>
+        <h3>Profit on paper, nothing in the bank</h3>
+        <p>Without accurate, up-to-date records, you can't see where cash is actually leaking — supplier terms, owner drawings, or expenses booked late.</p>
+      </div>
+      <div class="problem-card reveal">
+        <span class="mark">// recurring fines</span>
+        <h3>Paying NRA and Audit Service penalties</h3>
+        <p>Late filings, miscomputed tax, or missing documentation lead to avoidable fines that quietly eat into your margin every period.</p>
+      </div>
+      <div class="problem-card reveal">
+        <span class="mark">// false picture</span>
+        <h3>Decisions made on bad information</h3>
+        <p>Inaccurate statements mean you're guessing — about pricing, hiring, or expansion — instead of deciding from real numbers.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="services">
+  <div class="wrap">
+    <div class="section-label">What I handle</div>
+    <h2 class="section-title reveal">Your finances, kept accurate and current</h2>
+    <p class="section-intro reveal">Everything you need to know exactly where your business stands — done remotely, on your schedule.</p>
+  </div>
+
+  <div class="wrap">
+    <div class="services-grid">
+      <div class="service-cell reveal">
+        <span class="num">01</span>
+        <h3>Bookkeeping</h3>
+        <p>Day-to-day recording of income, expenses, and transactions — kept clean, categorized, and reconciled.</p>
+      </div>
+      <div class="service-cell reveal">
+        <span class="num">02</span>
+        <h3>Financial statement preparation</h3>
+        <p>Income statements, balance sheets, and cash flow statements that reflect what's actually happening in your business.</p>
+      </div>
+      <div class="service-cell reveal">
+        <span class="num">03</span>
+        <h3>Tax computation</h3>
+        <p>Accurate tax calculations to keep you compliant with NRA and avoid the penalties that come from errors or missed deadlines.</p>
+      </div>
+      <div class="service-cell reveal">
+        <span class="num">04</span>
+        <h3>Financial analysis</h3>
+        <p>Clear breakdowns of your numbers — margins, expenses, trends — so you can make decisions with confidence, not guesswork.</p>
+      </div>
+      <div class="service-cell reveal">
+        <span class="num">05</span>
+        <h3>Data analysis</h3>
+        <p>Turning raw transaction data into structured, usable information you can actually act on.</p>
+      </div>
+      <div class="service-cell reveal">
+        <span class="num">06</span>
+        <h3>Ongoing support</h3>
+        <p>Monthly check-ins and reporting, so your books stay current rather than becoming a year-end scramble.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="process" style="background:var(--white); border-top:1px solid var(--paper-line); border-bottom:1px solid var(--paper-line);">
+  <div class="wrap">
+    <div class="section-label">How it works</div>
+    <h2 class="section-title reveal">From messy records to a clear picture</h2>
+    <p class="section-intro reveal">A straightforward process, handled remotely — wherever your business is.</p>
+
+    <div class="process-list">
+      <div class="process-item reveal">
+        <span class="step-num">1</span>
+        <div>
+          <h3>Share your records</h3>
+          <p>Send over your existing transaction history, receipts, or bank statements — in whatever form you currently keep them.</p>
+        </div>
+      </div>
+      <div class="process-item reveal">
+        <span class="step-num">2</span>
+        <div>
+          <h3>I organize and reconcile</h3>
+          <p>Transactions are recorded, categorized, and reconciled in Excel, with discrepancies flagged and resolved.</p>
+        </div>
+      </div>
+      <div class="process-item reveal">
+        <span class="step-num">3</span>
+        <div>
+          <h3>Statements and tax computed</h3>
+          <p>You receive accurate financial statements and correct tax figures — filed on time, with no surprises from NRA.</p>
+        </div>
+      </div>
+      <div class="process-item reveal">
+        <span class="step-num">4</span>
+        <div>
+          <h3>You get a clear analysis</h3>
+          <p>A plain-language breakdown of what the numbers mean, so you can make decisions based on reality.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="about">
+  <div class="wrap">
+    <div class="section-label">About</div>
+    <h2 class="section-title reveal">Osman Abdulai Koroma</h2>
+
+    <div class="about-grid">
+      <div class="about-card reveal">
+        <h4>Education</h4>
+        <div class="edu-row">
+          <div class="school">Diploma in Applied Accounting</div>
+          <div class="deg">Institute of Public Administration and Management, University of Sierra Leone</div>
+        </div>
+        <div class="edu-row">
+          <div class="school">Government Secondary School for Boys</div>
+          <div class="deg">Magburaka</div>
+        </div>
+        <div class="tool-tags">
+          <span class="tool-tag">Excel</span>
+          <span class="tool-tag">Bookkeeping</span>
+          <span class="tool-tag">Tax Computation</span>
+        </div>
+      </div>
+
+      <div class="about-text reveal">
+        <p>I'm a virtual bookkeeper and financial statement assistant based in Freetown, Sierra Leone, working with business owners who are tired of guessing where their money goes.</p>
+        <p>Many businesses I work with look profitable on paper, yet have no cash on hand at the end of the period — and keep paying fines to the National Revenue Authority and Audit Service Sierra Leone because of inaccurate records and reporting. That gap between what the books say and what's actually true is exactly what I fix.</p>
+        <p>I handle your bookkeeping, prepare accurate financial statements, compute your taxes correctly, and give you a clear analysis of your business — so every decision you make is based on real numbers, not a false picture.</p>
+        <p>Currently working primarily in Excel, with a diploma in Applied Accounting from the Institute of Public Administration and Management, University of Sierra Leone.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="contact" id="contact">
+  <div class="wrap section">
+    <div class="contact-grid">
+      <div class="reveal">
+        <h2>Let's get your books balanced.</h2>
+        <p class="lede">Send your records, or just ask a question — I'll respond and walk you through how I can help, starting wherever your business currently stands.</p>
+      </div>
+
+      <div class="contact-card reveal">
+        <div class="contact-row">
+          <span class="icon">@</span>
+          <div>
+            <span class="lbl">Email</span>
+            <a href="mailto:koromaosmanabdul1@gmail.com">koromaosmanabdul1@gmail.com</a>
+          </div>
+        </div>
+        <div class="contact-row">
+          <span class="icon">☎</span>
+          <div>
+            <span class="lbl">Phone / WhatsApp</span>
+            <a href="tel:+23272934095">+232 72 934 095</a>
+          </div>
+        </div>
+        <div class="contact-row">
+          <span class="icon">⌖</span>
+          <div>
+            <span class="lbl">Location</span>
+            <span class="val">Freetown, Sierra Leone</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  © 2026 Osman Abdulai Koroma — Virtual Bookkeeper &amp; Financial Statement Assistant
+</footer>
+
+<script>
+  const reveals = document.querySelectorAll('.reveal');
+  const obs = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{
+      if(e.isIntersecting){
+        e.target.classList.add('in');
+        obs.unobserve(e.target);
+      }
+    });
+  },{threshold:0.12});
+  reveals.forEach(r=>obs.observe(r));
+</script>
+
+</body>
+</html>
